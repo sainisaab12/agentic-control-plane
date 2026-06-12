@@ -1,0 +1,5 @@
+services:
+  - type: web
+    name: incedo-agentic-control-plane
+    runtime: docker
+    plan: free
