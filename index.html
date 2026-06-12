@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incedo Agentic AI Control Plane Command Center</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js CDN for interactive visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- Left Sidebar Navigation Menu -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px rgba(0,240,255,0.45));"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        <div>
+          <h2>Incedo Control</h2>
+          <span class="subtext">AGENTIC CONTROL PLANE</span>
+        </div>
+      </div>
+      
+      <nav class="nav-menu">
+        <a href="#topology" class="nav-item active" id="nav-topology">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          Agentic Mesh Topology
+        </a>
+        <a href="#rules" class="nav-item" id="nav-rules">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Rules & Policies
+        </a>
+        <a href="#traces" class="nav-item" id="nav-traces">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="22" y1="12" x2="18" y2="12"></line><line x1="6" y1="12" x2="2" y2="12"></line><line x1="12" y1="6" x2="12" y2="2"></line><line x1="12" y1="22" x2="12" y2="18"></line></svg>
+          LangSmith Trace Explorer
+        </a>
+        <a href="#finops" class="nav-item" id="nav-finops">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          FinOps & Evals
+        </a>
+        <a href="#playground" class="nav-item" id="nav-playground">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          Prompt Playground
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="fleet-status-indicator" id="fleet-status-indicator">
+          <div class="status-dot"></div>
+          <span id="txt-fleet-status">FLEET ACTIVE</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Viewport Section -->
+    <main class="main-viewport">
+      <header class="viewport-header">
+        <h1 id="viewport-title">Agentic Mesh Topology</h1>
+        <div class="header-controls" style="display: flex; align-items: center; gap: 12px;">
+          <!-- Theme Toggle Button -->
+          <button class="btn secondary" id="btn-theme-toggle" title="Toggle Light/Dark presentation theme for screenshots" style="padding: 8px 12px; display: flex; align-items: center; gap: 6px;">
+            <span id="theme-btn-icon">☀️</span> <span id="theme-btn-text">Light Mode</span>
+          </button>
+          
+          <!-- Font Size Selector -->
+          <select id="font-size-select" class="btn secondary" title="Adjust text scale for screenshot readability" style="padding: 8px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: var(--text-primary); cursor: pointer; outline: none;">
+            <option value="font-normal" style="background: #141223; color: white;">A Normal</option>
+            <option value="font-large" style="background: #141223; color: white;">A+ Large</option>
+            <option value="font-xlarge" style="background: #141223; color: white;">A++ X-Large</option>
+          </select>
+          
+          <button class="btn danger" id="btn-global-shutdown" title="Instantly suspend API and routing access for the entire fleet">
+            EMERGENCY SHUTDOWN
+          </button>
+        </div>
+      </header>
+
+      <div class="viewport-content">
+        
+        <!-- 1. MESH TOPOLOGY SCREEN -->
+        <div id="page-topology" class="page-view active" style="position: relative; overflow: hidden;">
+          
+          <!-- Kill Switch / Shutdown Screen overlay -->
+          <div class="kill-switch-screen" id="kill-switch-screen">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ff3838" stroke-width="2.5" style="animation: pulse-dot 1.2s infinite;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <div class="kill-switch-title" id="kill-switch-title">FLEET SHUTDOWN ENGAGED</div>
+            <div class="kill-switch-desc" id="kill-switch-desc">
+              Control Plane policy enforcement suspended all operations.
+              Emergency kill switch triggered. API access token keys retracted.
+            </div>
+            <button class="btn danger" id="btn-reset-kill" style="padding: 10px 25px; font-weight: 700;">Reset Control Plane Channels</button>
+          </div>
+
+          <!-- Human in the Loop (HITL) Approval Modal Overlay -->
+          <div class="approval-overlay" id="approval-overlay">
+            <div class="approval-card">
+              <div class="approval-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--tier-2-color);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                HUMAN-IN-THE-LOOP APPROVAL REQUEST
+              </div>
+              <p style="font-size: 13px; color: var(--text-secondary);">
+                Critical tool write request captured. Please confirm execution authorization:
+              </p>
+              <div class="approval-details">
+                <strong>Agent:</strong> <span id="hitl-agent-name">Delphi RCA Agent</span><br>
+                <strong>Tool Target:</strong> <span id="hitl-tool-name">BGP Router Config write</span><br>
+                <strong>Proposed Action:</strong> <span id="hitl-proposed-action">Apply route filter on Northeast-core-01</span><br>
+                <strong>Estimated Cost:</strong> <span id="hitl-tool-cost">$0.05</span>
+              </div>
+              <div class="approval-actions">
+                <button class="btn danger" id="btn-hitl-deny">Deny Change</button>
+                <button class="btn" id="btn-hitl-approve" style="background: linear-gradient(135deg, var(--accent-green) 0%, #2ecc71 100%);">Approve & Write</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Topology View Layout Grid -->
+          <div class="topology-page-grid">
+            
+            <!-- SVG Canvas Panel -->
+            <div class="glass-panel" style="padding: 15px; flex: 1;">
+              <!-- Dynamic SVG Topology Toolbar -->
+              <div class="topology-toolbar">
+                <div class="topo-tool-btns">
+                  <button class="btn" id="btn-topo-add" title="Create a new agent node in the control plane">+ Add Agent</button>
+                  <button class="btn" id="btn-topo-connect" title="Create a route channel link between two agents">Connect Nodes</button>
+                  <button class="btn danger" id="btn-topo-delete" title="Delete selected agent node or connection link" disabled>Delete Selected</button>
+                </div>
+                <div class="topo-tip" id="topo-status-tip">Tip: Drag nodes to arrange. Click a node/link to select.</div>
+              </div>
+
+              <!-- Canvas svg container -->
+              <div class="topology-panel" style="min-height: 480px;">
+                <svg class="topology-svg" id="topology-svg" viewBox="0 0 800 480" style="height: 480px;">
+                  <!-- Dynamic SVG -->
+                </svg>
+              </div>
+
+              <!-- Intelligent Routing Tiers footer info bar -->
+              <div class="routing-harness-flow" style="margin-top: 15px;">
+                <div class="tier-card tier-0" id="card-tier0">
+                  <div class="tier-badge">Tier 0</div>
+                  <div class="tier-title">Deterministic</div>
+                  <div class="tier-cost">Token Cost: $0.00</div>
+                  <div class="tier-status"></div>
+                </div>
+                <div class="tier-card tier-1" id="card-tier1">
+                  <div class="tier-badge">Tier 1</div>
+                  <div class="tier-title">Traditional ML</div>
+                  <div class="tier-cost">Token Cost: $0.01</div>
+                  <div class="tier-status"></div>
+                </div>
+                <div class="tier-card tier-2" id="card-tier2">
+                  <div class="tier-badge">Tier 2</div>
+                  <div class="tier-title">Lightweight LLM</div>
+                  <div class="tier-cost">Token Cost: $0.05</div>
+                  <div class="tier-status"></div>
+                </div>
+                <div class="tier-card tier-3" id="card-tier3">
+                  <div class="tier-badge">Tier 3</div>
+                  <div class="tier-title">Frontier Reason</div>
+                  <div class="tier-cost">Token Cost: $0.40</div>
+                  <div class="tier-status"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent sliding details sidebar panel -->
+            <aside class="agent-side-drawer" id="agent-drawer">
+              <div class="drawer-header">
+                <h3>Agent Configurations</h3>
+                <span class="agent-item-bu" id="drawer-agent-bu">NetworkOps</span>
+              </div>
+              <div class="drawer-body" id="drawer-agent-content">
+                <!-- If no node selected -->
+                <div class="drawer-placeholder" id="drawer-placeholder">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                  <p>Click an Agent Node on the canvas to configure model routing, authorized tools, and runaway safety templates.</p>
+                </div>
+
+                <!-- Actual configuration inputs (displayed when agent selected) -->
+                <div class="drawer-inputs" id="drawer-inputs" style="display:none;">
+                  <div class="form-group">
+                    <label for="agent-model">Approved Model (Routing cap)</label>
+                    <select id="agent-model">
+                      <option value="Claude 3.5 Sonnet">Claude 3.5 Sonnet (Mid-Tier)</option>
+                      <option value="o1-pro">o1-pro (Premium Reasoning)</option>
+                      <option value="GPT-4o">GPT-4o (Premium General)</option>
+                      <option value="GPT-4o-mini">GPT-4o-mini (Lightweight)</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="agent-tier">Default Execution Tier</label>
+                    <select id="agent-tier">
+                      <option value="Tier 0">Tier 0 (Deterministic / Cache)</option>
+                      <option value="Tier 1">Tier 1 (Traditional ML)</option>
+                      <option value="Tier 2">Tier 2 (Lightweight LLM)</option>
+                      <option value="Tier 3">Tier 3 (Frontier Reason)</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <div class="slider-group">
+                      <label for="agent-budget">Token Budget Cap ($)</label>
+                      <span class="slider-val" id="lbl-agent-budget">$50.00</span>
+                    </div>
+                    <input type="range" id="agent-budget" min="5" max="250" step="5" value="50">
+                  </div>
+
+                  <div class="form-group">
+                    <div class="slider-group">
+                      <label for="agent-runaway">Runaway Loop limit</label>
+                      <span class="slider-val" id="lbl-agent-runaway" style="color:#ffb700;">3 loops</span>
+                    </div>
+                    <input type="range" id="agent-runaway" min="2" max="10" step="1" value="3">
+                  </div>
+
+                  <!-- Approved Tools Checklist -->
+                  <div class="form-group">
+                    <label>Authorized Execution Tools</label>
+                    <div class="tool-checklist" id="agent-tool-checklist">
+                      <!-- Checkboxes dynamically rendered -->
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="agent-template">Prompt Context Template</label>
+                    <textarea id="agent-template" rows="4" placeholder="Context injection template..."></textarea>
+                  </div>
+                </div>
+              </div>
+            </aside>
+            
+          </div>
+
+        </div>
+
+        <!-- 2. TARGETING RULES & POLICIES VIEW -->
+        <div id="page-rules" class="page-view" style="display: none;">
+          <div class="rules-page-layout">
+            
+            <!-- Left Pane: Control flags & Globals -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              
+              <!-- Control flags card -->
+              <section class="glass-panel">
+                <div class="panel-title">
+                  Control Flags
+                  <span>LaunchDarkly</span>
+                </div>
+                <div class="agent-config-form" style="border-top: none; padding-top: 0; gap: 15px;">
+                  <div class="flag-card">
+                    <div class="flag-header">
+                      <span class="flag-title">Advanced Guardrails</span>
+                      <label class="switch">
+                        <input type="checkbox" id="flag-guardrails" checked>
+                        <span class="switch-slider"></span>
+                      </label>
+                    </div>
+                    <p class="flag-desc">Intercept and screen prompts/responses in real time. Blocks runaway loop patterns instantly.</p>
+                  </div>
+
+                  <div class="flag-card">
+                    <div class="flag-header">
+                      <span class="flag-title">Self-Healing Fallbacks</span>
+                      <label class="switch">
+                        <input type="checkbox" id="flag-fallback" checked>
+                        <span class="switch-slider"></span>
+                      </label>
+                    </div>
+                    <p class="flag-desc">If sub-tier model fails or response quality falls below 70%, automatically escalate execution path to Frontier LLM.</p>
+                  </div>
+
+                  <div class="flag-card">
+                    <div class="flag-header">
+                      <span class="flag-title">Inject Model Failures</span>
+                      <label class="switch">
+                        <input type="checkbox" id="flag-inject-error">
+                        <span class="switch-slider"></span>
+                      </label>
+                    </div>
+                    <p class="flag-desc">Simulate backend downtime in sub-tier LLM providers to test self-healing automated recovery loops.</p>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="slider-group">
+                      <label for="flag-rollout">Canary Prompt Rollout</label>
+                      <span class="slider-val" id="lbl-flag-rollout" style="color:var(--tier-3-color);">10% Canary</span>
+                    </div>
+                    <input type="range" id="flag-rollout" min="0" max="100" step="10" value="10">
+                    <p class="flag-desc" style="margin-top: 2px;">Gradually release new prompt variants (v2) to production agents. Remaining flows use stable prompts (v1).</p>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Global policies card -->
+              <section class="glass-panel">
+                <div class="panel-title">
+                  Global Policies
+                  <span>Compliance</span>
+                </div>
+                <div class="agent-config-form" style="border-top: none; padding-top: 0;">
+                  <div class="form-group">
+                    <div class="slider-group">
+                      <label for="global-budget-cap">Global Fleet Budget Cap ($)</label>
+                      <span class="slider-val" id="lbl-global-budget-cap">$15,000</span>
+                    </div>
+                    <input type="range" id="global-budget-cap" min="5000" max="50000" step="2500" value="15000">
+                  </div>
+
+                  <div class="form-group">
+                    <div class="slider-group">
+                      <label for="global-max-concurrency">Max Fleet Concurrency</label>
+                      <span class="slider-val" id="lbl-global-max-concurrency" style="color:var(--tier-2-color);">3 threads</span>
+                    </div>
+                    <input type="range" id="global-max-concurrency" min="1" max="10" step="1" value="3">
+                  </div>
+
+                  <div class="form-group">
+                    <div class="slider-group">
+                      <label for="global-rate-limit">Control Plane API Rate Limit</label>
+                      <span class="slider-val" id="lbl-global-rate-limit" style="color:var(--tier-0-color);">60 req/min</span>
+                    </div>
+                    <input type="range" id="global-rate-limit" min="10" max="200" step="10" value="60">
+                  </div>
+                </div>
+              </section>
+
+              <!-- Routing Tiers Configuration card -->
+              <section class="glass-panel">
+                <div class="panel-title">
+                  Routing Tiers Configuration
+                  <span>Tier Tuners</span>
+                </div>
+                <div class="agent-config-form" style="border-top: none; padding-top: 0; gap: 12px;">
+                  
+                  <!-- Tier 0 Config -->
+                  <div style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+                    <div style="font-size: 12px; font-weight:700; color:var(--tier-0-color); margin-bottom: 6px;">Tier 0 (Deterministic / Cache)</div>
+                    <div class="form-group" style="margin-bottom: 6px;">
+                      <div class="slider-group">
+                        <label for="tier0-threshold">Semantic Similarity Limit</label>
+                        <span class="slider-val" id="lbl-tier0-threshold">85%</span>
+                      </div>
+                      <input type="range" id="tier0-threshold" min="50" max="100" step="5" value="85">
+                    </div>
+                  </div>
+
+                  <!-- Tier 1 Config -->
+                  <div style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+                    <div style="font-size: 12px; font-weight:700; color:var(--tier-1-color); margin-bottom: 6px;">Tier 1 (Traditional ML)</div>
+                    <div class="form-group" style="margin-bottom: 6px;">
+                      <div class="slider-group">
+                        <label for="tier1-accuracy">Confidence Routing Limit</label>
+                        <span class="slider-val" id="lbl-tier1-accuracy">80%</span>
+                      </div>
+                      <input type="range" id="tier1-accuracy" min="50" max="100" step="5" value="80">
+                    </div>
+                  </div>
+
+                  <!-- Tier 2 Config -->
+                  <div style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+                    <div style="font-size: 12px; font-weight:700; color:var(--tier-2-color); margin-bottom: 6px;">Tier 2 (Lightweight LLM)</div>
+                    <div class="form-group" style="margin-bottom: 6px;">
+                      <div class="slider-group">
+                        <label for="tier2-temp">Temperature (Gen Randomness)</label>
+                        <span class="slider-val" id="lbl-tier2-temp">0.3</span>
+                      </div>
+                      <input type="range" id="tier2-temp" min="0" max="10" step="1" value="3">
+                    </div>
+                  </div>
+
+                  <!-- Tier 3 Config -->
+                  <div>
+                    <div style="font-size: 12px; font-weight:700; color:var(--tier-3-color); margin-bottom: 6px;">Tier 3 (Frontier Reason)</div>
+                    <div class="form-group">
+                      <label for="tier3-effort">Reasoning Computation Effort</label>
+                      <select id="tier3-effort" style="width:100%;">
+                        <option value="low">Low (Faster)</option>
+                        <option value="medium" selected>medium</option>
+                        <option value="high">High (Deep reasoning)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                </div>
+              </section>
+
+            </div>
+
+            <!-- Right Pane: LaunchDarkly Targeting Rules Editor -->
+            <section class="glass-panel" style="flex: 1;">
+              <div class="panel-title">
+                Contextual Targeting Rules Registry
+                <span>LD Rules Engine</span>
+              </div>
+              <p class="flag-desc" style="margin-top:-5px; margin-bottom: 5px;">Configure target routing policy overrides dynamically based on context tags sent during execution:</p>
+              
+              <div id="targeting-rules-list" style="display:flex; flex-direction:column; gap:12px; max-height: 480px; overflow-y: auto; padding-right:5px;">
+                <!-- Dynamic rule cards -->
+              </div>
+              
+              <button class="btn secondary" id="btn-add-rule" style="margin-top: 10px;">+ Add Custom Policy Override Rule</button>
+            </section>
+
+          </div>
+        </div>
+
+        <!-- 3. LANGSMITH TRACE EXPLORER VIEW -->
+        <div id="page-traces" class="page-view" style="display: none;">
+          <div class="traces-page-layout">
+            
+            <!-- Left Pane: Trace Browsing Table -->
+            <section class="glass-panel" style="flex: 1.2; padding: 18px;">
+              <div class="panel-title">
+                LangSmith Trace Explorer
+                <span>Recent Runs</span>
+              </div>
+              
+              <div style="overflow-x: auto; margin-top:5px;">
+                <table class="trace-table" id="trace-list-table">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Trace ID</th>
+                      <th>Agent</th>
+                      <th>Outcome</th>
+                      <th>Latency</th>
+                      <th>Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody id="trace-list-tbody">
+                    <!-- Traces rows rendered dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- Right Pane: Expanded spans and details explorer -->
+            <div style="flex: 1; display:flex; flex-direction:column; gap:20px;">
+              
+              <!-- Collapsible spans tree tab section -->
+              <section class="glass-panel" style="flex: 1;">
+                <div class="panel-title" style="border-bottom: none; padding-bottom: 0;">
+                  Runtime Span Tree & Inspector
+                  <span>Telemetry</span>
+                </div>
+                <div class="tabs" style="margin-top: -5px;">
+                  <button class="tab-btn active" id="tab-btn-trace-tree">Span Tree visualizer</button>
+                  <button class="tab-btn" id="tab-btn-trace-inspector">Raw JSON Trace</button>
+                </div>
+                
+                <!-- Tree visualization -->
+                <div class="console-panel" id="trace-tree-panel" style="flex: 1; min-height: 250px;">
+                  <div class="trace-tree-root" id="trace-tree-container">
+                    <span class="placeholder-text" style="color:var(--text-secondary); font-size:12px;">Select an execution from the left list to inspect its hierarchical nested spans.</span>
+                  </div>
+                </div>
+
+                <!-- Raw JSON tab -->
+                <div class="console-panel" id="trace-panel" style="display: none; flex: 1; min-height: 250px;">
+                  <pre class="trace-json" id="trace-json-box">{ "info": "Select an execution from the left list to inspect its raw JSON trace data." }</pre>
+                </div>
+              </section>
+
+              <!-- Automated Judges output panel -->
+              <section class="glass-panel" style="height: 180px; justify-content: flex-start; gap: 8px;">
+                <div class="panel-title" style="border-bottom: none; padding-bottom:0;">
+                  Automated Output Judges
+                  <span>Real-time score</span>
+                </div>
+                <div style="font-size:11px; color:var(--text-secondary); display:flex; justify-content:space-between; margin-bottom:5px;">
+                  <span>Automated LLM Output Grades for Selected Run:</span>
+                  <strong id="lbl-live-judge-outcome" style="color:var(--accent-green);">PASSED</strong>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:15px; margin-top:5px;">
+                  <div>
+                    <div class="eval-metric-label-row" style="font-size:11px;">
+                      <span>Safety Scan</span>
+                      <strong id="lbl-judge-safety">0%</strong>
+                    </div>
+                    <div class="eval-progress-track" style="height: 5px;">
+                      <div class="eval-progress-fill stable" id="bar-judge-safety" style="width: 0%; background:var(--accent-green);"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="eval-metric-label-row" style="font-size:11px;">
+                      <span>Syntactic Schema</span>
+                      <strong id="lbl-judge-format">0%</strong>
+                    </div>
+                    <div class="eval-progress-track" style="height: 5px;">
+                      <div class="eval-progress-fill stable" id="bar-judge-format" style="width: 0%; background:var(--accent-green);"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="eval-metric-label-row" style="font-size:11px;">
+                      <span>Cost Efficiency</span>
+                      <strong id="lbl-judge-cost">0%</strong>
+                    </div>
+                    <div class="eval-progress-track" style="height: 5px;">
+                      <div class="eval-progress-fill stable" id="bar-judge-cost" style="width: 0%; background:var(--accent-green);"></div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. FINOPS & EVALS VIEW -->
+        <div id="page-finops" class="page-view" style="display: none;">
+          <div style="display:flex; flex-direction:column; gap:20px;">
+            
+            <!-- AI FinOps Strip (Budget allocations, spends, savings) -->
+            <div class="finops-summary-strip">
+              <div class="metric-card budget">
+                <span class="metric-label">Verizon AI Budget</span>
+                <div class="metric-value" id="val-verizon-budget-finops">$10,000</div>
+                <span class="metric-subtext">Enterprise cloud allocation</span>
+              </div>
+              <div class="metric-card spend">
+                <span class="metric-label">Total Actual Spend</span>
+                <div class="metric-value" id="val-total-spend-finops">$145.20</div>
+                <span class="metric-subtext">Cumulative token consumption fees</span>
+              </div>
+              <div class="metric-card savings" id="savings-card-finops">
+                <span class="metric-label">Token Costs Saved</span>
+                <div class="metric-value" id="val-total-saved-finops">$32.40</div>
+                <span class="metric-subtext">Saved via Knowledge Retrieval (Tier 0)</span>
+              </div>
+              <div class="metric-card efficiency" id="variance-card-finops">
+                <span class="metric-label">Budget Variance</span>
+                <div class="metric-value" id="val-variance-finops" style="color: #2ecc71;">$9,854.80</div>
+                <span class="metric-subtext">Remaining budget buffer</span>
+              </div>
+              <div class="metric-card efficiency">
+                <span class="metric-label">Compounding Efficiency</span>
+                <div class="metric-value" id="val-efficiency-finops" style="color: #00f0ff;">18.2%</div>
+                <span class="metric-subtext">Avoided generation ratio</span>
+              </div>
+            </div>
+
+            <!-- Cost Trends charts splits -->
+            <section class="glass-panel">
+              <div class="panel-title">
+                AI FinOps Cost Analysis
+                <span>Interactive Trends</span>
+              </div>
+              <div class="charts-grid" style="gap:15px; margin-top:5px;">
+                <div class="chart-container">
+                  <canvas id="chart-spend-trend"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas id="chart-bu-spend"></canvas>
+                </div>
+              </div>
+            </section>
+
+            <!-- Offline Evaluations sweeps & continuous learning cache splits -->
+            <div class="charts-grid">
+              
+              <!-- Offline Benchmarking -->
+              <section class="glass-panel">
+                <div class="panel-title">
+                  Offline Evaluations & Evals
+                  <span>A/B/n test</span>
+                </div>
+                <div class="topology-toolbar">
+                  <button class="btn" id="btn-run-evals" style="background: linear-gradient(135deg, var(--tier-3-color) 0%, var(--tier-2-color) 100%);">Run Benchmark Evaluation Sweep</button>
+                  <div class="topo-tip" id="eval-status-text">Evaluation Index: Idle</div>
+                </div>
+
+                <div class="eval-dashboard-grid" style="grid-template-columns: 1fr 1fr;">
+                  <!-- Stable Prompt v1 -->
+                  <div class="eval-run-box">
+                    <div style="font-size:12px; font-weight:700; color:var(--accent-blue); margin-bottom:5px;">Prompt v1 (Stable - 90%)</div>
+                    
+                    <div class="eval-metric-bar-container">
+                      <div class="eval-metric-label-row">
+                        <span>Avg Satisfaction</span>
+                        <span id="lbl-eval-sat-v1">0%</span>
+                      </div>
+                      <div class="eval-progress-track">
+                        <div class="eval-progress-fill stable" id="bar-eval-sat-v1" style="width: 0%;"></div>
+                      </div>
+                    </div>
+
+                    <div class="eval-metric-bar-container">
+                      <div class="eval-metric-label-row">
+                        <span>Avg Latency (ms)</span>
+                        <span id="lbl-eval-lat-v1">0 ms</span>
+                      </div>
+                      <div class="eval-progress-track">
+                        <div class="eval-progress-fill stable" id="bar-eval-lat-v1" style="width: 0%;"></div>
+                      </div>
+                    </div>
+
+                    <div class="eval-metric-bar-container">
+                      <div class="eval-metric-label-row">
+                        <span>Avg Decision Cost</span>
+                        <span id="lbl-eval-cost-v1">$0.00</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Candidate Prompt v2 -->
+                  <div class="eval-run-box">
+                    <div style="font-size:12px; font-weight:700; color:var(--tier-3-color); margin-bottom:5px;">Prompt v2 (Candidate - 10%)</div>
+
+                    <div class="eval-metric-bar-container">
+                      <div class="eval-metric-label-row">
+                        <span>Avg Satisfaction</span>
+                        <span id="lbl-eval-sat-v2">0%</span>
+                      </div>
+                      <div class="eval-progress-track">
+                        <div class="eval-progress-fill candidate" id="bar-eval-sat-v2" style="width: 0%;"></div>
+                      </div>
+                    </div>
+
+                    <div class="eval-metric-bar-container">
+                      <div class="eval-metric-label-row">
+                        <span>Avg Latency (ms)</span>
+                        <span id="lbl-eval-lat-v2">0 ms</span>
+                      </div>
+                      <div class="eval-progress-track">
+                        <div class="eval-progress-fill candidate" id="bar-eval-lat-v2" style="width: 0%;"></div>
+                      </div>
+                    </div>
+
+                    <div class="eval-metric-bar-container">
+                      <div class="eval-metric-label-row">
+                        <span>Avg Decision Cost</span>
+                        <span id="lbl-eval-cost-v2">$0.00</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <button class="btn secondary" id="btn-promote-canary" disabled style="font-size:12px; padding: 6px; margin-top: 10px;">Promote Candidate (v2) to 100% Prod</button>
+              </section>
+
+              <!-- Knowledge Cache database -->
+              <section class="glass-panel">
+                <div class="panel-title">
+                  Knowledge AI Cache Database
+                  <span>Continuous Learning Index</span>
+                </div>
+                <div class="cache-panel" id="cache-list">
+                  <!-- Dynamic cache entries -->
+                </div>
+              </section>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 5. PROMPT PLAYGROUND & EXPERIMENTATION -->
+        <div id="page-playground" class="page-view" style="display: none;">
+          <div class="playground-page-layout">
+            
+            <!-- Left Pane: Side-by-side prompt diffs registry -->
+            <section class="glass-panel" style="flex: 1.5; padding: 18px;">
+              <div class="panel-title">
+                Prompt Variant Registry Diffs
+                <span>Playground diff</span>
+              </div>
+              <p class="flag-desc" style="margin-top:-5px; margin-bottom:10px;">Side-by-side Monaco-style visual diff showing updates made between the current stable prompt context (v1) and candidate variant (v2):</p>
+              
+              <div class="diff-container-box">
+                <!-- Stable prompt v1 diff -->
+                <div class="diff-pane">
+                  <div class="diff-pane-header">Prompt v1 (Stable)</div>
+                  <pre class="diff-code">
+  Analyze alarm stream,
+<span class="diff-del">- correlate events across topology,</span>
+  and isolate issues.
+                  </pre>
+                </div>
+                <!-- Candidate prompt v2 diff -->
+                <div class="diff-pane">
+                  <div class="diff-pane-header">Prompt v2 (Candidate)</div>
+                  <pre class="diff-code">
+  Analyze alarm stream,
+<span class="diff-ins">+ cross-reference physical topology links,</span>
+<span class="diff-ins">+ cluster root-cause anomalies,</span>
+<span class="diff-ins">+ recommend precise mitigations,</span>
+  and isolate issues.
+                  </pre>
+                </div>
+              </div>
+            </section>
+
+            <!-- Right Pane: Sandbox Prompt Playground -->
+            <section class="glass-panel" style="flex: 1;">
+              <div class="panel-title">
+                Live Sandbox Playground Console
+                <span>Test harness</span>
+              </div>
+              <p class="flag-desc" style="margin-top:-5px; margin-bottom:10px;">Execute a sandbox query directly using the currently active agent. Verify evaluations live in the console below:</p>
+              
+              <div class="agent-config-form" style="border-top: none; padding-top: 0; gap: 15px;">
+                <div class="form-group">
+                  <label>Load Pre-configured Scenario</label>
+                  <div id="playground-scenarios" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 5px;">
+                    <!-- Rendered dynamically via app.js -->
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="playground-prompt-input">Test Sandbox Prompt Query</label>
+                  <textarea id="playground-prompt-input" rows="3">Investigate incident ticket #RCA-9082: Root cause analysis of packet loss on Northeast core router.</textarea>
+                </div>
+                
+                <button class="btn" id="btn-run-playground" style="background: linear-gradient(135deg, var(--tier-0-color) 0%, var(--accent-blue) 100%);">
+                  Run Sandbox Query
+                </button>
+              </div>
+
+              <div class="panel-subtitle" style="font-size:11px; color:var(--text-secondary); margin-top:10px; font-weight:700;">Live Console Logs:</div>
+              <div class="console-panel" id="playground-console" style="min-height: 180px; flex: 1;">
+                <div class="log-line system"><span class="timestamp">[12:00:00]</span><strong>[Playground]</strong> Sandbox initialized. Enter a query and click run.</div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
