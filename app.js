@@ -1444,7 +1444,7 @@ async function runPlaygroundSandbox() {
 }
 
 // ----------------------------------------------------
-// LaunchDarkly-inspired Offline Evaluations & Evals Benchmark Sweep
+// Offline Evaluations & Evals Benchmark Sweep
 // ----------------------------------------------------
 async function runEvaluationSweep() {
   const btn = document.getElementById('btn-run-evals');
