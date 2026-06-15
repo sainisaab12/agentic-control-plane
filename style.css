@@ -503,7 +503,7 @@ header {
   color: var(--tier-0-color);
 }
 
-/* Control Flags styles (LaunchDarkly toggle style) */
+/* Control Flags styles (Feature Toggle style) */
 .flag-card {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.05);
