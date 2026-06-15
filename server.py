@@ -20,7 +20,7 @@ STATE = {
     "isKillSwitchActive": False,
     "isGlobalShutdown": False,
     
-    # Control Flags (LaunchDarkly-inspired)
+    # Control Flags
     "flags": {
         "guardrails": True,
         "fallback": True,
@@ -99,7 +99,7 @@ STATE = {
         "tier3": { "effort": "medium" }
     },
 
-    # LaunchDarkly-style Targeting Rules override policies
+    # Targeting Rules override policies
     "targetingRules": [
         { "id": "rule-1", "attribute": "region", "operator": "equals", "value": "northeast-edge", "action": "route_override", "actionValue": "o1-pro" },
         { "id": "rule-2", "attribute": "userRole", "operator": "equals", "value": "contractor", "action": "force_hitl", "actionValue": "True" }
@@ -517,7 +517,7 @@ async def agent_execute(request: Request):
                 "judges": judges_grades
             }
 
-        # B. LaunchDarkly-style Targeting Rules evaluation
+        # B. Targeting Rules evaluation
         rules_span = create_span("Targeting Rules evaluation", parent_id=root_span)
         
         # Infer contexts from prompt if not explicitly provided
