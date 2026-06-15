@@ -73,6 +73,7 @@ header {
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 16px;
   box-shadow: var(--panel-glow);
 }
@@ -143,6 +144,7 @@ header {
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 18px 20px;
   border-radius: 16px;
   box-shadow: var(--panel-glow);
@@ -212,6 +214,7 @@ header {
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 16px;
   box-shadow: var(--panel-glow);
   padding: 22px;
@@ -930,6 +933,7 @@ input:checked + .switch-slider:before {
   height: 100%;
   background: rgba(8, 7, 13, 0.85);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 16px;
   z-index: 90;
   flex-direction: column;
@@ -1290,6 +1294,7 @@ input:checked + .switch-slider:before {
   background: var(--panel-bg);
   border-right: 1px solid var(--panel-border);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   padding: 25px 20px;
   display: flex;
   flex-direction: column;
@@ -1412,6 +1417,7 @@ input:checked + .switch-slider:before {
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   padding: 22px;
   border-radius: 16px;
   display: flex;
@@ -1837,3 +1843,163 @@ body.font-xlarge .console-panel pre, body.font-xlarge pre, body.font-xlarge code
 body.font-xlarge .trace-table { font-size: 17px; }
 body.font-xlarge .trace-tree-node { font-size: 16px; }
 
+/* ====================================================
+   Mobile & Responsive Viewport Optimizations (Android/iOS)
+   ==================================================== */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  .app-container {
+    gap: 15px;
+  }
+
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    left: auto;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--panel-border);
+    padding: 10px 14px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    z-index: 100;
+  }
+
+  .sidebar-brand {
+    margin-bottom: 0;
+  }
+  
+  .sidebar-brand svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .sidebar-brand h2 {
+    font-size: 13px;
+  }
+  
+  .sidebar-brand .subtext {
+    display: none;
+  }
+
+  .nav-menu {
+    flex-direction: row;
+    overflow-x: auto;
+    width: auto;
+    max-width: calc(100% - 130px);
+    padding-bottom: 0;
+    gap: 4px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .nav-menu::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-item {
+    padding: 8px 10px;
+    font-size: 11px;
+    white-space: nowrap;
+    border-left: none !important;
+    border-bottom: 2px solid transparent;
+  }
+
+  .nav-item.active {
+    border-bottom: 2px solid var(--tier-0-color);
+    background: rgba(0, 240, 255, 0.05);
+  }
+
+  .sidebar-footer {
+    display: none;
+  }
+
+  .main-viewport {
+    margin-left: 0;
+    padding: 10px 0;
+    gap: 15px;
+  }
+
+  .viewport-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding-bottom: 10px;
+  }
+  
+  .viewport-header h1 {
+    font-size: 18px;
+  }
+  
+  .header-controls {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* Grid/Layout Collapse for Mobile */
+  .topology-page-grid {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .agent-side-drawer {
+    width: 100%;
+  }
+
+  .rules-page-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .traces-page-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .playground-page-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .diff-container-box {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* SVG Canvas Responsiveness */
+  .topology-svg {
+    height: auto !important;
+    max-height: 45vh;
+  }
+
+  .topology-panel {
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 5px;
+  }
+
+  /* Touch Targets adjustment for buttons/inputs */
+  button, select, input, .nav-item {
+    min-height: 38px;
+  }
+
+  .glass-panel {
+    padding: 15px;
+  }
+
+  .approval-card {
+    max-width: 95%;
+    margin: 10px;
+    padding: 15px;
+  }
+}
